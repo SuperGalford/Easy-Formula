@@ -1,5 +1,0 @@
-﻿interface:
-  display_name: "公式提取"
-  short_description: "提取文献中的数学公式并转为LaTeX代码，保存到Word文档"
-  brand_color: "#6366F1"
-  default_prompt: "Use $formula-extract to extract mathematical formulas from the literature and convert them to LaTeX code."

@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "easy-formula"
+version = "1.0.0"
+description = "Extract mathematical formulas from academic PDFs, convert them to LaTeX, and generate Chinese DOCX reports."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Easy Formula"}]
+dependencies = [
+  "PyMuPDF>=1.24",
+  "python-docx>=1.1",
+  "Pillow>=10.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "reportlab>=4.0"]
+
+[project.scripts]
+easy-formula = "easy_formula.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["easy_formula*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

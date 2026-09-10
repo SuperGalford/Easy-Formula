@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "source_pdf": "sample.pdf",
+  "results": [
+    {
+      "candidate_id": "F0001",
+      "is_formula": true,
+      "latex": "\\beta \\in (0,1)",
+      "confidence": "high",
+      "visual_verified": true,
+      "notes": ""
+    },
+    {
+      "candidate_id": "F0002",
+      "is_formula": true,
+      "latex": "x_i",
+      "confidence": "high",
+      "visual_verified": true,
+      "notes": ""
+    },
+    {
+      "candidate_id": "F0003",
+      "is_formula": true,
+      "latex": "U_i(x)=\\sum_{j=1}^{n}\\beta_j x_{ij}.",
+      "confidence": "high",
+      "visual_verified": true,
+      "notes": ""
+    },
+    {
+      "candidate_id": "F0004",
+      "is_formula": true,
+      "latex": "\\frac{\\partial U_i}{\\partial x_i}=\\alpha_i+\\gamma x_i^2.",
+      "confidence": "high",
+      "visual_verified": true,
+      "notes": ""
+    }
+  ]
+}
