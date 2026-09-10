@@ -1,142 +1,70 @@
-# Easy Formula V1
+# Easy Formula
 
-Easy Formula 用于从 PDF 学术文献中提取数学公式，转换为 LaTeX，并生成与原文献同名的 DOCX 文档。
+Easy Formula 是一个供 Codex Agent 使用的 Skill。它能从 PDF 学术文献中定位数学公式，转写为 LaTeX，进行视觉核对，并生成中文 DOCX 结果文档。
 
-## 设计目标
+## 使用前准备
 
-- 支持独立公式与行内公式；
-- 支持单 PDF 与文件夹批量处理；
-- Python 负责稳定的 PDF 解析、候选检测、裁剪和 DOCX 生成；
-- 多模态 Agent 负责真正困难的公式视觉转写；
-- 不绑定任何模型 API，也不在项目中保存 API Key；
-- 低置信度结果不会被隐藏；
-- DOCX 中除公式、LaTeX 与源数据外，所有说明文字均为简体中文。
+用户只需在运行 Agent 的设备上安装 Python 3.11 或更高版本，并确保 Agent 可以读取待处理的 PDF、在输出目录中创建文件。
 
-## 安装
+无需手动安装 PyMuPDF、python-docx、Pillow 或其他运行依赖。首次调用本 Skill 时，Agent 会检查并自动安装缺少的依赖；如 Python 缺失、版本不足，或当前环境不允许安装依赖，Agent 会说明需要处理的具体问题。
 
-建议 Python 3.11+。
+不需要配置 API Key、公式 OCR 服务或命令行工具。
 
-```bash
-pip install -e .
-```
+## 安装 Skill
 
-如果运行环境无法联网获取构建依赖，但已经预装 setuptools，可使用：
-
-```bash
-pip install -e . --no-build-isolation
-```
-
-开发测试依赖：
-
-```bash
-pip install -e ".[dev]"
-```
-
-## Agent 推荐工作流
-
-### 1. 分析
-
-```bash
-easy-formula analyze paper.pdf
-```
-
-终端会打印 `manifest.json` 和 `recognition_results.json` 的位置。
-
-### 2. 视觉转写
-
-按照 `SKILL.md`，查看 `crops/` 中的公式截图，填写 `recognition_results.json`。
-
-### 3. 验证
-
-```bash
-easy-formula validate /path/to/manifest.json
-```
-
-### 4. 生成 DOCX
-
-```bash
-easy-formula build /path/to/manifest.json
-```
-
-最终得到：
+把本仓库链接交给 Agent，并说：
 
 ```text
-paper.pdf
-paper.docx
+请从 https://github.com/SuperGalford/easy-formula 安装 easy-formula Skill。
 ```
 
-## 批量处理
+安装后，Agent 可在处理 PDF 公式时调用该 Skill。
 
-```bash
-easy-formula analyze ./papers
-```
+## 如何触发
 
-递归：
+上传或提供 PDF 文件后，直接向 Agent 发出自然语言请求。
 
-```bash
-easy-formula analyze ./papers --recursive
-```
-
-## 扫描型 PDF
-
-分析结果中的 `scan_pages` 会列出缺少足够文本层的页面。Agent 应检查对应整页图片；如发现漏掉的公式，可补充：
-
-```bash
-easy-formula add-candidate manifest.json \
-  --page 3 \
-  --bbox 120,540,930,720 \
-  --coords px
-```
-
-## 无视觉能力时的降级模式
-
-```bash
-easy-formula text-auto paper.pdf
-```
-
-该模式只利用 PDF 文本层进行保守转换，复杂公式准确率明显低于视觉 Agent，适合测试 Pipeline，不适合作为高精度最终结果。
-
-## DOCX 结构
-
-每个公式包括：
+提取全部公式并生成 Word 文档：
 
 ```text
-公式 12
-页码：7
-公式类型：独立公式
-原始公式：[截图]
-LaTeX 代码：...
-可直接使用的 LaTeX：...
-识别置信度：高/中/低
+请使用 easy-formula 提取这篇论文中的全部公式，转成 LaTeX，并生成 Word 文档。
 ```
 
-低置信度或自动校验发现问题的公式会在文末再次汇总。
-
-## 项目结构
+只提取独立公式：
 
 ```text
-easy-formula-v1/
-├── SKILL.md
-├── README.md
-├── pyproject.toml
-├── easy_formula/
-│   ├── cli.py
-│   ├── pipeline.py
-│   ├── pdf_inspector.py
-│   ├── formula_detector.py
-│   ├── formula_extractor.py
-│   ├── text_latex.py
-│   ├── verifier.py
-│   ├── latex_renderer.py
-│   └── docx_generator.py
-├── prompts/
-├── scripts/
-├── tests/
-└── examples/
+请使用 easy-formula 提取这篇论文中的独立公式，不需要行内公式，并生成 Word 文档。
 ```
 
-## 测试
+提取全部公式（包括行内公式）：
 
-```bash
-pytest -q
+```text
+请使用 easy-formula 完整提取这篇论文中的所有公式，包括行内公式；请转成 LaTeX 并生成 Word 文档。
 ```
+
+只处理指定页码：
+
+```text
+请使用 easy-formula 提取该 PDF 第 5 至 10 页中的公式，并生成 Word 文档。
+```
+
+## Agent 会完成的工作
+
+Agent 将：
+
+1. 解析 PDF 并定位候选公式；
+2. 检查公式截图，排除网址、页码、参考文献和普通正文等误报；
+3. 将确认公式转写为 LaTeX；
+4. 二次核对符号、上下标、分式、矩阵和括号；
+5. 标注识别置信度；
+6. 生成与原 PDF 同名的中文 DOCX 文档。
+
+每条公式在 DOCX 中包含页码、类型、原始截图、LaTeX 代码、可直接使用的 LaTeX 和识别置信度。低置信度或自动校验发现问题的公式会在文末“需要人工核对的公式”部分汇总。
+
+## 适用范围
+
+- 单篇 PDF；
+- 文件夹中的多篇 PDF；
+- 独立公式与行内公式；
+- 扫描型 PDF 页面；
+- 中文 DOCX 公式提取报告。

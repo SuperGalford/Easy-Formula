@@ -5,6 +5,12 @@ description: 从 PDF 学术文献中定位独立公式与行内公式，使用�
 
 # Easy Formula V1
 
+## 首次调用的环境准备
+
+用户只需要预先安装并提供 Python 3.11 或更高版本。不要要求用户打开终端安装本 Skill 的运行依赖。
+
+首次调用本 Skill 时，先检查 `PyMuPDF`、`python-docx` 和 `Pillow` 是否可用。若缺失，由 Agent 在本环境中自动安装 `requirements.txt` 中的依赖，然后继续处理。Python 不存在、版本不足，或 Agent 无法安装依赖时，才告知用户需要处理的具体环境问题。
+
 > 如果环境中尚未安装 `easy-formula` 命令，可在项目根目录将本文中的 `easy-formula ...` 替换为 `python -m easy_formula ...`。
 
 ## 目标
